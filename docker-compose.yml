@@ -11,8 +11,6 @@ services:
       MYSQL_USER: "user"
       MYSQL_PASSWORD: "password"
       MYSQL_ROOT_PASSWORD: "password"
-    ports:
-      - "3306:3306"
   node:
     networks:
       - db_net
