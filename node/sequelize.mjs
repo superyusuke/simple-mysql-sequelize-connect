@@ -1,18 +1,16 @@
 import Sequelize from "sequelize";
-import jsyaml from "js-yaml";
 import fs from "fs-extra";
-import util from "util";
 import DBG from "debug";
-const log = DBG("users:model-users");
-const error = DBG("users:error");
+const log = DBG("notes:model-notes");
+const error = DBG("notes:error");
 
 var SQNote;
 var sequlz;
 
 async function connectDB() {
   if (SQNote) return SQNote.sync();
-  const yamlText = await fs.readFile(process.env.SEQUELIZE_CONNECT, "utf8");
-  const params = await jsyaml.safeLoad(yamlText, "utf8");
+  const params = await fs.readJSON('./sequelizeSettings.json');
+  log(params)
 
   // db に接続したインスタンスがない場合は接続してインスタンスを作る
   if (!sequlz)
