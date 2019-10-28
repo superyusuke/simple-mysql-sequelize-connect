@@ -5,26 +5,40 @@ const log = DBG("users:model-users");
 
 const PORT = process.env.PORT || 3000;
 
-function respond(req, res, next) {
-  res.send("hello1234 " + req.params.name);
-  next();
-}
-
 const server = restify.createServer();
-server.get("/hello/:name", respond);
-server.head("/hello/:name", respond);
+
+// url parameter を req.query にパースしてくれる
+// /test?id=12 => req.query.id
+server.use(restify.plugins.queryParser());
+// リクエストの body をパースしてくれるっぽい
+server.use(
+  restify.plugins.bodyParser({
+    mapParams: true
+  })
+);
+
+server.get("/test", (req, res, next) => {
+  res.send(req.query);
+  next();
+});
+
+server.get("/create/:name", async (req, res, next) => {
+  const name = req.query.name;
+  log(name);
+  const createdNote = await usersModel.create(name, "this is test");
+  res.send(createdNote);
+  next();
+});
 
 server.get("/list", async (req, res, next) => {
-  res.send('just list')
   try {
-    var res = await usersModel.justDBConnect();
-    log('after db connect')
-    res.send("in try");
-    next(false)
+    const notes = await usersModel.listNotes();
+    res.send(notes);
+    next(false);
   } catch (err) {
     log(err)
-    res.send(err);
-    next(false)
+    res.send("error");
+    next(false);
   }
 });
 

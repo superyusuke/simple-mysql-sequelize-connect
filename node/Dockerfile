@@ -1,6 +1,6 @@
 FROM node:12
 
-ENV DEBUG="users:*"
+ENV DEBUG="notes:*"
 ENV PORT="3333"
 ENV REST_LISTEN="0.0.0.0"
 

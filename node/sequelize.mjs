@@ -6,18 +6,15 @@ import DBG from "debug";
 const log = DBG("users:model-users");
 const error = DBG("users:error");
 
-var SQUser;
+var SQNote;
 var sequlz;
 
 async function connectDB() {
-  log('start conncetDB')
-  if (SQUser) return SQUser.sync();
-  log('after SQUser')
-  const yamltext = await fs.readFile(process.env.SEQUELIZE_CONNECT, "utf8");
-  log('yamltext')
-  const params = await jsyaml.safeLoad(yamltext, "utf8");
-  log("Sequelize params " + util.inspect(params));
+  if (SQNote) return SQNote.sync();
+  const yamlText = await fs.readFile(process.env.SEQUELIZE_CONNECT, "utf8");
+  const params = await jsyaml.safeLoad(yamlText, "utf8");
 
+  // db に接続したインスタンスがない場合は接続してインスタンスを作る
   if (!sequlz)
     sequlz = new Sequelize(
       params.dbname,
@@ -33,40 +30,19 @@ async function connectDB() {
   // additional tables for those.
   //
   // The Portable Contacts "id" field maps to the "username" field here
-  if (!SQUser)
-    SQUser = sequlz.define("Car", {
-      carName: { type: Sequelize.STRING, unique: true },
-      password: Sequelize.STRING,
+  if (!SQNote)
+    SQNote = sequlz.define("Note", {
+      name: { type: Sequelize.STRING, unique: true },
+      description: Sequelize.STRING
     });
-  return SQUser.sync();
+  return SQNote.sync();
 }
 
-export async function justDBConnect() {
-  log("just db connect");
-  const SQUser = await connectDB();
-  return SQUser;
-}
-
-export async function create(
-  username,
-  password,
-  provider,
-  familyName,
-  givenName,
-  middleName,
-  emails,
-  photos
-) {
-  const SQUser = await connectDB();
-  return SQUser.create({
-    username: username,
-    password: password,
-    provider: provider,
-    familyName: familyName,
-    givenName: givenName,
-    middleName: middleName,
-    emails: JSON.stringify(emails),
-    photos: JSON.stringify(photos)
+export async function create(name, description) {
+  const SQNote = await connectDB();
+  return SQNote.create({
+    name,
+    description
   });
 }
 
@@ -148,10 +124,10 @@ export async function findOrCreate(profile) {
   );
 }
 
-export async function listUsers() {
-  const SQUser = await connectDB();
-  const userlist = await SQUser.findAll({});
-  return userlist.map(user => sanitizedUser(user));
+export async function listNotes() {
+  const SQNote = await connectDB();
+  const notes = await SQNote.findAll({});
+  return notes;
 }
 
 export function sanitizedUser(user) {

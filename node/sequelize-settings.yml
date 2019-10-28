@@ -1,4 +1,4 @@
-dbname: db
+dbname: note
 username: user
 password: password
 params:
