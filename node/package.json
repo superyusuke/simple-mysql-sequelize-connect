@@ -4,6 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node --experimental-modules ./server.mjs"
+    "start": "nodemon --experimental-modules ./server.mjs"
+  },
+  "dependencies": {
+    "nodemon": "^1.19.4",
+    "restify": "^8.4.0"
   }
 }

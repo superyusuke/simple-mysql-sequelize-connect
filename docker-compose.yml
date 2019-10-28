@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  db:
+    networks:
+      - db_net
+    image: mysql/mysql-server:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+  node:
+    networks:
+      - db_net
+    build: ./node
+    volumes:
+      - ./node:/app
+    ports:
+      - "3333:3333"
+networks:
+  db_net:
+    driver: bridge

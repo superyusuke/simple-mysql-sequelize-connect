@@ -1,13 +1,16 @@
-console.log("this is server");
-
-import * as http from "http";
+import restify from "restify";
 
 const PORT = process.env.PORT || 3000;
 
-const server = http.createServer(function(req, res) {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Hello, World!\n");
-});
+function respond(req, res, next) {
+  res.send("hello1234 " + req.params.name);
+  next();
+}
 
-server.listen(PORT);
-console.log(`Server running at http://localhost:${PORT} in host`);
+const server = restify.createServer();
+server.get("/hello/:name", respond);
+server.head("/hello/:name", respond);
+
+server.listen(PORT, function() {
+  console.log("%s listening at %s", server.name, server.url);
+});
